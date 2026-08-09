@@ -25,7 +25,7 @@ You only do this once per computer.
 ## STEP 2 — Unzip the system
 1. Unzip the file I sent you (e.g. `SJKMPanel.zip`) into a folder you'll remember,
    for example `C:\SJKMPanel`.
-2. Open that folder. You should see `JeffNetPanel.bat` and some other files.
+
 
 ---
 
