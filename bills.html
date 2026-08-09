@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SJKM NETWORK DATA LINK — Bills</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root { --primary:#d41616; --primary-dark:#991010; --accent:#e70d0d; --ink:#0b1f3a; --muted:#5b6b85; --bg:#f4f8ff; --border:#e2e9f5; }
+        * { box-sizing:border-box; margin:0; padding:0; }
+        body { font-family:'Inter',sans-serif; color:var(--ink); background:#fff; line-height:1.6; display:flex; flex-direction:column; min-height:100vh; }
+        a { text-decoration:none; color:inherit; }
+        img { max-width:100%; }
+        .container { max-width:1140px; margin:0 auto; padding:0 24px; width:100%; }
+        .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:11px 22px; border-radius:10px; font-weight:600; font-size:14px; transition:.15s; cursor:pointer; border:none; }
+        .btn-primary { background:var(--primary); color:#fff; } .btn-primary:hover { background:var(--primary-dark); }
+        .btn-ghost { background:transparent; color:var(--ink); border:1.5px solid var(--border); } .btn-ghost:hover { border-color:var(--primary); color:var(--primary); }
+        .btn-sm { padding:7px 14px; font-size:13px; }
+
+        header.site { position:sticky; top:0; z-index:50; background:rgba(255,255,255,.92); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); }
+        .nav { display:flex; align-items:center; justify-content:space-between; height:70px; gap:16px; }
+        .brand { display:flex; align-items:center; gap:11px; }
+        .brand img { height:42px; width:auto; object-fit:contain; }
+        .menu { display:flex; align-items:center; gap:26px; }
+        .menu a.link { font-size:14px; font-weight:600; color:var(--muted); } .menu a.link:hover, .menu a.link.active { color:var(--primary); }
+        .nav-cta { display:flex; gap:10px; align-items:center; }
+        .hamburger { display:none; background:none; border:none; font-size:22px; color:var(--ink); cursor:pointer; padding:6px; line-height:1; }
+        .nav-login-mobile { display:none; }
+        .nav-paybills-mobile { display:none; }
+
+        .bills-hero { background:linear-gradient(135deg,#0f4ba8,#1763d6 55%,#0ea5e9); color:#fff; padding:54px 0; text-align:center; }
+        .bills-hero h1 { font-size:clamp(26px,3.6vw,38px); font-weight:900; letter-spacing:-.02em; margin-bottom:8px; }
+        .bills-hero p { opacity:.92; font-size:16px; max-width:560px; margin:0 auto; }
+
+        main { flex:1; padding:48px 0 70px; }
+        .lookup-card { max-width:620px; margin:-90px auto 0; background:#fff; border:1px solid var(--border); border-radius:18px; box-shadow:0 20px 50px rgba(15,23,42,.12); padding:30px 28px; position:relative; z-index:2; }
+        .lookup-card h2 { font-size:20px; font-weight:800; margin-bottom:6px; }
+        .lookup-card .sub { font-size:14px; color:var(--muted); margin-bottom:20px; }
+        .lookup-form { display:flex; gap:10px; flex-wrap:wrap; }
+        .lookup-form input { flex:1; min-width:200px; padding:13px 16px; border:1.5px solid var(--border); border-radius:11px; font-size:15px; font-family:inherit; outline:none; }
+        .lookup-form input:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(23,99,214,.12); }
+
+        .alert { margin-top:18px; padding:13px 16px; border-radius:11px; font-size:14px; display:flex; align-items:center; gap:10px; }
+        .alert-error { background:#fef2f2; color:#b91c1c; border:1px solid #fecaca; }
+
+        .results { max-width:860px; margin:34px auto 0; }
+        .acct { border:1px solid #d6e4ff; border-radius:14px; padding:18px 20px; display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:18px; }
+        .acct .label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); }
+        .acct .val { font-size:15px; font-weight:700; }
+        .bill-table { width:100%; border-collapse:collapse; background:#fff; border:1px solid var(--border); border-radius:14px; overflow:hidden; }
+        .bill-table th { text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); padding:13px 16px; background:#f7faff; border-bottom:1px solid var(--border); }
+        .bill-table td { padding:14px 16px; border-bottom:1px solid var(--border); font-size:14px; }
+        .bill-table tr:last-child td { border-bottom:none; }
+        .badge { display:inline-flex; align-items:center; gap:5px; padding:4px 11px; border-radius:99px; font-size:11px; font-weight:700; }
+        .badge-paid { background:#dcfce7; color:#166534; }
+        .badge-unpaid { background:#fef9c3; color:#854d0e; }
+        .badge-overdue { background:#fee2e2; color:#991b1b; }
+        .empty { text-align:center; color:var(--muted); padding:30px; }
+        .year-group { background:#fff; border:1px solid var(--border); border-radius:14px; margin-bottom:14px; overflow:hidden; }
+        .year-head { width:100%; display:flex; justify-content:space-between; align-items:center; gap:12px; padding:15px 18px; background:#f7faff; border:none; cursor:pointer; font-size:15px; font-weight:800; color:var(--ink); font-family:inherit; }
+        .year-head .yc { transition:transform .2s; margin-right:8px; color:var(--primary); }
+        .year-head.open .yc { transform:rotate(90deg); }
+        .year-count { font-size:12px; font-weight:600; color:var(--muted); }
+        .year-body .bill-table { border:none; border-radius:0; box-shadow:none; }
+        .bill-expand-btn { display:none; }
+
+        footer.site { background:var(--ink); color:#aebed6; padding:50px 0 26px; margin-top:40px; }
+        .foot-grid { display:grid; grid-template-columns:1.4fr 1fr 1.2fr; gap:36px; }
+        .foot-brand { display:flex; align-items:center; gap:11px; color:#fff; font-weight:800; font-size:18px; margin-bottom:14px; }
+        .foot-brand img { height:40px; object-fit:contain; }
+        .foot p { font-size:13.5px; line-height:1.7; }
+        .foot h5 { color:#fff; font-size:14px; margin-bottom:14px; text-transform:uppercase; letter-spacing:.05em; }
+        .foot ul { list-style:none; display:flex; flex-direction:column; gap:9px; }
+        .foot ul a { font-size:13.5px; } .foot ul a:hover { color:#fff; }
+        .foot-contact div { display:flex; gap:10px; align-items:flex-start; font-size:13.5px; margin-bottom:10px; }
+        .foot-contact i { color:var(--accent); margin-top:4px; }
+        .copyright { text-align:center; margin-top:36px; padding-top:22px; border-top:1px solid rgba(255,255,255,.1); font-size:13px; color:#7f93b3; }
+
+        @media (max-width:760px){
+            .menu { position:absolute; top:100%; left:0; right:0; display:none; flex-direction:column; align-items:stretch; gap:0; background:#fff; border-bottom:1px solid var(--border); box-shadow:0 14px 26px rgba(15,23,42,.1); padding:8px 0; }
+            .menu.open { display:flex; }
+            .menu a.link { padding:13px 24px; }
+            .nav-login-desktop { display:none; }
+            .nav-login-mobile { display:block; margin:10px 24px 6px; }
+            .hamburger { display:inline-flex; align-items:center; }
+            .nav-paybills-mobile { display:inline-flex; padding:8px 14px; font-size:13px; }
+            .foot-grid { grid-template-columns:1fr; }
+            .lookup-card { margin-top:20px; }
+        }
+        @media (max-width:640px){
+            .nav { height:64px; }
+            .brand img { height:36px; }
+            .bills-hero { padding:40px 0; }
+            .lookup-card { padding:24px 18px; }
+            .lookup-form input { min-width:100%; }
+            .lookup-form .btn { width:100%; }
+            .acct { flex-direction:column; gap:14px; }
+            .results { margin-top:26px; }
+            .bill-table, .bill-table tbody { display:block; }
+            .bill-table thead { display:none; }
+            .bill-table { border:none; background:transparent; }
+            .bill-table tr { display:flex; flex-wrap:wrap; align-items:center; gap:8px; border-bottom:1px solid var(--border); padding:10px 14px; }
+            .bill-table tr:last-child { border-bottom:none; }
+            .bill-table td { display:none; padding:0; font-size:13px; }
+            .bill-table td[data-label="#"] { display:flex; align-items:center; gap:8px; order:1; font-weight:700; color:var(--muted); }
+            .bill-table td[data-label="Period"] { display:block; flex:1; min-width:80px; order:2; font-weight:600; color:var(--ink); }
+            .bill-table td[data-label="Status"] { display:block; order:3; }
+            .bill-table td[data-label="Action"] { display:block; order:4; text-align:right !important; }
+            .bill-expand-btn { display:flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:7px; border:1px solid var(--border); background:#f7faff; color:var(--ink); cursor:pointer; flex-shrink:0; font-size:11px; }
+            .bill-table tr.expanded td[data-label="Invoice #"],
+            .bill-table tr.expanded td[data-label="Due Date"],
+            .bill-table tr.expanded td[data-label="Amount"] {
+                display:flex; justify-content:space-between; align-items:center; width:100%; order:5; padding:7px 2px; border-top:1px solid var(--border); text-align:left !important; font-weight:600;
+            }
+            .bill-table tr.expanded td[data-label="Invoice #"]::before,
+            .bill-table tr.expanded td[data-label="Due Date"]::before,
+            .bill-table tr.expanded td[data-label="Amount"]::before {
+                content:attr(data-label); color:var(--muted); font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:.04em;
+            }
+        }
+        /* Dark mode (bills page) */
+        body.dark { background:#0b1220; --ink:#e6edf7; --muted:#9fb0c9; --bg:#0d1526; --border:#22304a; }
+        body.dark header.site { background:rgba(11,18,32,.9); }
+        body.dark .bills-hero { background:#0b1220; }
+        body.dark .lookup-card, body.dark .bill-table, body.dark .year-group { background:#111b30; }
+        body.dark .bill-table th, body.dark .year-head, body.dark .bill-expand-btn { background:#0d1526; }
+        body.dark .lookup-form input { background:#0d1526; color:var(--ink); }
+        body.dark .btn-ghost { color:var(--ink); }
+        body.dark footer.site { background:#070c16; }
+        body.dark .menu { background:#0d1526; }
+    </style>
+</head>
+<body class="">
+
+<header class="site">
+    <div class="container nav">
+        <a href="https://sjkmdatalink.isproph.com" class="brand">
+            <img src="https://sjkmdatalink.isproph.com/storage/company/sjkm-data-link-bUVlA3/sidebar_1785149072.png" alt="SJKM NETWORK DATA LINK">        </a>
+        <nav class="menu" id="navMenu">
+            <a href="https://sjkmdatalink.isproph.com" class="link">Home</a>
+            <a href="https://sjkmdatalink.isproph.com#pricing" class="link">Plans</a>
+            <a href="https://sjkmdatalink.isproph.com#contact" class="link">Contact</a>
+            <a href="https://sjkmdatalink.isproph.com/bills" class="link active">Bills</a>
+            <a href="https://sjkmdatalink.isproph.com/speedtest" class="link">Speed Test</a>            <a href="https://sjkmdatalink.isproph.com/login" class="btn btn-primary nav-login-mobile">Login</a>
+        </nav>
+        <div class="nav-cta">
+            <a href="https://sjkmdatalink.isproph.com/login" class="btn btn-primary nav-login-desktop">Login</a>
+            <a href="https://sjkmdatalink.isproph.com/bills" class="btn btn-primary nav-paybills-mobile"><i class="fas fa-file-invoice-dollar"></i> Pay Bills</a>
+            <button type="button" class="hamburger" onclick="document.getElementById('navMenu').classList.toggle('open')" aria-label="Toggle menu"><i class="fas fa-bars"></i></button>
+        </div>
+    </div>
+</header>
+
+<div class="bills-hero">
+    <div class="container">
+        <h1>Check &amp; Pay Your Bills</h1>
+        <p>Enter your SJKM NETWORK DATA LINK service number below to view your billing history and pay outstanding invoices.</p>
+    </div>
+</div>
+
+<main>
+    <div class="container">
+        <div class="lookup-card">
+            <h2>Check &amp; Pay Your Bills</h2>
+            <div class="sub">Enter your account / service number to view your bills.</div>
+            <form method="POST" action="https://sjkmdatalink.isproph.com/bills" class="lookup-form">
+                <input type="hidden" name="_token" value="U3kxnlU4oRbgOaysJ8gKL87eftzIBRyAFM25PghW" autocomplete="off">                <input type="text" name="account_number" value="" placeholder="Enter your service number" required autofocus>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-magnifying-glass"></i> Check Bills</button>
+            </form>
+                                </div>
+
+            </div>
+</main>
+
+<footer class="site">
+    <div class="container">
+        <div class="foot-grid">
+            <div>
+                <div class="foot-brand">
+                    <img src="https://sjkmdatalink.isproph.com/storage/company/sjkm-data-link-bUVlA3/sidebar_1785149072.png" alt="SJKM NETWORK DATA LINK">                </div>
+                <p>Fast and reliable unlimited internet connection for your home and business.</p>
+            </div>
+            <div>
+                <h5>Quick Links</h5>
+                <ul>
+                    <li><a href="https://sjkmdatalink.isproph.com">Home</a></li>
+                    <li><a href="https://sjkmdatalink.isproph.com#pricing">Plans</a></li>
+                    <li><a href="https://sjkmdatalink.isproph.com#contact">Contact</a></li>
+                    <li><a href="https://sjkmdatalink.isproph.com/bills">Check Bills</a></li>
+                    <li><a href="https://sjkmdatalink.isproph.com/speedtest">Speed Test</a></li>                    <li><a href="https://sjkmdatalink.isproph.com/login">Account Login</a></li>
+                </ul>
+            </div>
+            <div class="foot-contact">
+                <h5>Contact</h5>
+                <div><i class="fas fa-location-dot"></i> <span>Zone 4 Centro San Vicente Ogbon
+San Vicnte Ogbun Nabua cam Sur</span></div>                <div><i class="fas fa-phone"></i> <span>+639383346242</span></div>                <div><i class="fas fa-envelope"></i> <span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fc8f95888f939089889593928fc4c8bc9b919d9590d29f9391">[email&#160;protected]</a></span></div>            </div>
+        </div>
+        <div class="copyright">&copy; 2026 SJKM NETWORK DATA LINK. All rights reserved.</div>
+    </div>
+</footer>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+(function(){
+    var menu = document.getElementById('navMenu');
+    if (!menu) return;
+    menu.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', function(){ menu.classList.remove('open'); }); });
+})();
+function toggleYear(btn){
+    btn.classList.toggle('open');
+    var body = btn.nextElementSibling;
+    body.style.display = (body.style.display === 'none') ? '' : 'none';
+}
+(function () {
+    document.querySelectorAll('.bill-table tbody tr').forEach(function (row) {
+        var cell = row.querySelector('td[data-label="#"]');
+        if (!cell || cell.querySelector('.bill-expand-btn')) return;
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'bill-expand-btn';
+        btn.innerHTML = '<i class="fas fa-plus"></i>';
+        btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var open = row.classList.toggle('expanded');
+            btn.innerHTML = open ? '<i class="fas fa-minus"></i>' : '<i class="fas fa-plus"></i>';
+        });
+        cell.insertBefore(btn, cell.firstChild);
+    });
+})();
+</script>
+</body>
+</html>

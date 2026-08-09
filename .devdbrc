@@ -1,0 +1,10 @@
+[
+  {
+    "type": "sqlite",
+    "path": "c:\\SJKM-Billing-System\\SJKM BILLING SYSTEM\\billing.db"
+  },
+  {
+    "type": "sqlite",
+    "path": "f:\\Billing\\ARJ BILLING SYSTEM\\lease_management.db"
+  }
+]

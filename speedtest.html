@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SJKM NETWORK DATA LINK — Speed Test</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root { --primary:#d41616; --primary-dark:#991010; --accent:#e70d0d; --ink:#0b1f3a; --muted:#5b6b85; --bg:#f4f8ff; --border:#e2e9f5; }
+        * { box-sizing:border-box; margin:0; padding:0; }
+        body { font-family:'Inter',sans-serif; color:var(--ink); background:#fff; line-height:1.6; display:flex; flex-direction:column; min-height:100vh; }
+        a { text-decoration:none; color:inherit; }
+        img { max-width:100%; }
+        .container { max-width:1140px; margin:0 auto; padding:0 24px; width:100%; }
+        .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:11px 22px; border-radius:10px; font-weight:600; font-size:14px; transition:.15s; cursor:pointer; border:none; }
+        .btn-primary { background:var(--primary); color:#fff; } .btn-primary:hover { background:var(--primary-dark); }
+        .btn-ghost { background:transparent; color:var(--ink); border:1.5px solid var(--border); } .btn-ghost:hover { border-color:var(--primary); color:var(--primary); }
+
+        header.site { position:sticky; top:0; z-index:50; background:rgba(255,255,255,.92); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); }
+        .nav { display:flex; align-items:center; justify-content:space-between; height:70px; gap:16px; }
+        .brand { display:flex; align-items:center; gap:11px; }
+        .brand img { height:42px; width:auto; object-fit:contain; }
+        .brand-name { font-weight:900; font-size:18px; letter-spacing:-.02em; }
+        .menu { display:flex; align-items:center; gap:26px; }
+        .menu a.link { font-size:14px; font-weight:600; color:var(--muted); } .menu a.link:hover, .menu a.link.active { color:var(--primary); }
+        .nav-cta { display:flex; gap:10px; align-items:center; }
+        .hamburger { display:none; background:none; border:none; font-size:22px; color:var(--ink); cursor:pointer; padding:6px; line-height:1; }
+        .nav-login-mobile { display:none; }
+        .nav-paybills-mobile { display:none; }
+
+        .st-hero { background:linear-gradient(135deg,#0f4ba8,#1763d6 55%,#0ea5e9); color:#fff; padding:54px 0 96px; text-align:center; }
+        .st-hero h1 { font-size:clamp(26px,3.6vw,38px); font-weight:900; letter-spacing:-.02em; margin-bottom:8px; }
+        .st-hero p { opacity:.92; font-size:16px; max-width:620px; margin:0 auto; }
+
+        main { flex:1; padding:0 0 70px; }
+        .st-card { max-width:900px; margin:-60px auto 0; background:#fff; border:1px solid var(--border); border-radius:18px; box-shadow:0 20px 50px rgba(15,23,42,.12); padding:18px; position:relative; z-index:2; }
+        .st-frame { width:100%; height:660px; border:0; border-radius:12px; display:block; background:var(--bg); }
+
+        .st-fallback { text-align:center; padding:38px 24px; }
+        .st-fallback .ico { width:74px; height:74px; border-radius:50%; background:var(--bg); color:var(--primary); display:flex; align-items:center; justify-content:center; font-size:30px; margin:0 auto 16px; }
+        .st-fallback h2 { font-size:21px; font-weight:800; margin-bottom:8px; }
+        .st-fallback p { color:var(--muted); font-size:14px; max-width:520px; margin:0 auto 20px; }
+
+        .tips { max-width:900px; margin:26px auto 0; display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:14px; }
+        .tip { background:var(--bg); border:1px solid var(--border); border-radius:14px; padding:16px 18px; }
+        .tip h4 { font-size:14px; font-weight:700; margin-bottom:4px; display:flex; align-items:center; gap:8px; }
+        .tip h4 i { color:var(--primary); }
+        .tip p { font-size:13px; color:var(--muted); line-height:1.6; }
+
+        footer.site { background:#08172c; color:#c8d6ea; padding:44px 0 22px; }
+        footer.site h5 { color:#fff; font-size:14px; font-weight:800; margin-bottom:12px; }
+        .foot-grid { display:grid; grid-template-columns:1.6fr 1fr 1.2fr; gap:34px; }
+        .foot-grid ul { list-style:none; display:flex; flex-direction:column; gap:8px; font-size:14px; }
+        .foot-grid a:hover { color:#fff; }
+        .foot-contact div { display:flex; gap:9px; align-items:flex-start; font-size:14px; margin-bottom:8px; }
+        .copyright { border-top:1px solid rgba(255,255,255,.1); margin-top:28px; padding-top:16px; text-align:center; font-size:13px; opacity:.75; }
+
+        /* Dark landing theme — same palette and overrides as the landing and bills pages. */
+        body.dark { background:#0b1220; --ink:#e6edf7; --muted:#9fb0c9; --bg:#0d1526; --border:#22304a; }
+        body.dark header.site { background:rgba(11,18,32,.9); }
+        body.dark .st-hero { background:#0b1220; }
+        body.dark .st-card, body.dark .tip { background:#111b30; }
+        body.dark .st-frame { background:#0d1526; }
+        body.dark .st-fallback .ico { background:#1a2540; }
+        body.dark .btn-ghost { color:var(--ink); }
+        body.dark footer.site { background:#070c16; }
+        body.dark .menu { background:#0d1526; }
+
+        @media (max-width:860px) {
+            .menu { position:absolute; top:70px; left:0; right:0; background:#fff; border-bottom:1px solid var(--border); flex-direction:column; align-items:stretch; gap:0; padding:8px 0; display:none; }
+            .menu.open { display:flex; }
+            .menu a.link { padding:12px 24px; }
+            .hamburger { display:block; }
+            .nav-login-desktop { display:none; }
+            .nav-login-mobile { display:block; margin:10px 24px 6px; }
+            /* Menu is collapsed behind the hamburger from here down, so surface Bills
+               in the header the same way the landing and bills pages do. */
+            .nav-paybills-mobile { display:inline-flex; padding:8px 14px; font-size:13px; }
+            .st-frame { height:560px; }
+            .foot-grid { grid-template-columns:1fr; }
+        }
+    </style>
+</head>
+<body class="">
+
+<header class="site" id="top">
+    <div class="container nav">
+        <a href="https://sjkmdatalink.isproph.com" class="brand">
+            <img src="https://sjkmdatalink.isproph.com/storage/company/sjkm-data-link-bUVlA3/sidebar_1785149072.png" alt="SJKM NETWORK DATA LINK">        </a>
+        <nav class="menu" id="navMenu">
+            <a href="https://sjkmdatalink.isproph.com" class="link">Home</a>
+            <a href="https://sjkmdatalink.isproph.com/#pricing" class="link">Plans</a>
+            <a href="https://sjkmdatalink.isproph.com/#contact" class="link">Contact</a>
+            <a href="https://sjkmdatalink.isproph.com/bills" class="link">Bills</a>
+            <a href="https://sjkmdatalink.isproph.com/speedtest" class="link active">Speed Test</a>
+            <a href="https://sjkmdatalink.isproph.com/login" class="btn btn-primary nav-login-mobile">Login</a>
+        </nav>
+        <div class="nav-cta">
+            <a href="https://sjkmdatalink.isproph.com/login" class="btn btn-primary nav-login-desktop">Login</a>
+            <a href="https://sjkmdatalink.isproph.com/bills" class="btn btn-primary nav-paybills-mobile"><i class="fas fa-file-invoice-dollar"></i> Pay Bills</a>
+            <button type="button" class="hamburger" onclick="document.getElementById('navMenu').classList.toggle('open')" aria-label="Toggle menu"><i class="fas fa-bars"></i></button>
+        </div>
+    </div>
+</header>
+
+<section class="st-hero">
+    <div class="container">
+        <h1>Test Your Internet Speed</h1>
+        <p>Check your download and upload speed on your SJKM NETWORK DATA LINK connection. For the most accurate result, pause other downloads and streaming first.</p>
+    </div>
+</section>
+
+<main>
+    <div class="container">
+        <div class="st-card">
+                            
+                <iframe class="st-frame" src="https://fast.com" title="Speed test" allowfullscreen loading="lazy"></iframe>
+                    </div>
+
+        <div class="tips">
+            <div class="tip">
+                <h4><i class="fas fa-plug"></i> Use a wired connection</h4>
+                <p>A LAN cable to your router gives the truest reading. Wi-Fi speed depends on distance, walls, and how many devices are connected.</p>
+            </div>
+            <div class="tip">
+                <h4><i class="fas fa-pause"></i> Pause other activity</h4>
+                <p>Streaming, downloads, and online games on other devices share the same line and will lower your result.</p>
+            </div>
+            <div class="tip">
+                <h4><i class="fas fa-headset"></i> Result lower than your plan?</h4>
+                <p>Run the test a few times, then contact us with the screenshots and we'll check your line.</p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="site">
+    <div class="container">
+        <div class="foot-grid">
+            <div>
+                <h5>SJKM NETWORK DATA LINK</h5>
+                <p style="font-size:14px">Fast and reliable unlimited internet connection for your home and business.</p>
+            </div>
+            <div>
+                <h5>Quick Links</h5>
+                <ul>
+                    <li><a href="https://sjkmdatalink.isproph.com">Home</a></li>
+                    <li><a href="https://sjkmdatalink.isproph.com/#pricing">Plans</a></li>
+                    <li><a href="https://sjkmdatalink.isproph.com/#contact">Contact</a></li>
+                    <li><a href="https://sjkmdatalink.isproph.com/bills">View Bills</a></li>
+                    <li><a href="https://sjkmdatalink.isproph.com/speedtest">Speed Test</a></li>
+                </ul>
+            </div>
+            <div class="foot-contact">
+                <h5>Contact</h5>
+                <div><i class="fas fa-location-dot"></i> <span>Zone 4 Centro San Vicente Ogbon
+San Vicnte Ogbun Nabua cam Sur</span></div>                <div><i class="fas fa-phone"></i> <span>+639383346242</span></div>                <div><i class="fas fa-envelope"></i> <span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="681b011c1b07041d1c0107061b505c280f05090104460b0705">[email&#160;protected]</a></span></div>            </div>
+        </div>
+        <div class="copyright">&copy; 2026 SJKM NETWORK DATA LINK. All rights reserved.</div>
+    </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
+</html>
